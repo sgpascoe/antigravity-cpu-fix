@@ -1,0 +1,35 @@
+=== ANTIGRAVITY DIAGNOSIS REPORT ===
+Generated: $(date)
+
+CURRENT STATE:
+- 1 Antigravity window open
+- 16 Chrome processes spawned
+- 9 renderer processes (UI panels/tabs)
+- 1 GPU process
+- 1 main process
+- Multiple utility processes
+
+RESOURCE USAGE:
+- CPU: 17.2% total
+- Memory: 2.3GB total
+- Main process: 9% CPU, 293MB RAM
+- Top renderer: 2.9% CPU, 271MB RAM
+
+ROOT CAUSE:
+The "cloud agent" feature spawns multiple Chrome renderer processes:
+- Each UI panel (agent manager, chat, etc.) = 1 renderer process
+- Each tab/panel = separate renderer for isolation
+- Agent manager panel likely polling/refreshing constantly
+
+WHY THIS IS EXCESSIVE:
+For a single cloud agent, you shouldn't need:
+- 9 renderer processes (should be 2-3 max)
+- 17% CPU when idle
+- 2.3GB RAM for basic operation
+
+SOLUTIONS:
+1. Optimize agent manager panel (disable auto-refresh)
+2. Close unused panels/tabs in Antigravity
+3. Apply performance optimizations
+4. Consider if you really need the agent manager panel open
+
