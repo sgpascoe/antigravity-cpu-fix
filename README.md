@@ -49,8 +49,7 @@ ps aux | grep antigravity | grep -v grep | awk '{sum+=$3} END {print "Total CPU:
 ## Files you need
 - `fix-antigravity-balanced.sh` — apply once (auto backups)
 - `auto-repatch-and-launch.sh` — reapply after updates and launch with devtools port
-- `fix-antigravity.sh` — original scripted flow (kept for completeness)
-- `archive/` — deep-dive and legacy stuff (can ignore)
+- `archive/` — everything else (old variants, monitor script, deep dive)
 
 ## Limits
 - Antigravity updates overwrite bundled JS; rerun the patch or use the launcher.
