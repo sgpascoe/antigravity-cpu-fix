@@ -1,6 +1,7 @@
 # Backup directories
 /tmp/antigravity_backups_*/
-
+*.bak
+*.bak.*
 # OS files
 .DS_Store
 Thumbs.db
