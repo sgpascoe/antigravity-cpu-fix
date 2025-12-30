@@ -10,7 +10,10 @@ if [ "$OS_TYPE" == "Darwin" ]; then
 	BASE_INSTALL="/Applications/Antigravity.app/Contents"
 	AG_SETTINGS="$HOME/Library/Application Support/Antigravity/User/settings.json"
 else
-	if [ -d "/opt/Antigravity" ]; then
+	# Linux: prefer apt path (/usr/share), fallback to Arch/tarball (/opt)
+	if [ -d "/usr/share/antigravity/resources" ]; then
+		BASE_INSTALL="/usr/share/antigravity"
+	elif [ -d "/opt/Antigravity/resources" ]; then
 		BASE_INSTALL="/opt/Antigravity"
 	else
 		BASE_INSTALL="/usr/share/antigravity"

@@ -31,8 +31,10 @@ if [ "$OS_TYPE" == "Darwin" ]; then
 	CONFIG_BASE="$HOME/Library/Application Support"
 	AG_SETTINGS="$CONFIG_BASE/Antigravity/User/settings.json"
 else
-	# Linux (Arch/Debian)
-	if [ -d "/opt/Antigravity" ]; then
+	# Linux: prefer apt path (/usr/share), fallback to Arch/tarball (/opt)
+	if [ -d "/usr/share/antigravity/resources" ]; then
+		BASE_INSTALL="/usr/share/antigravity"
+	elif [ -d "/opt/Antigravity/resources" ]; then
 		BASE_INSTALL="/opt/Antigravity"
 	else
 		BASE_INSTALL="/usr/share/antigravity"
@@ -129,7 +131,6 @@ if ls -d /tmp/antigravity_backups_* >/dev/null 2>&1; then
 fi
 
 echo ""
-echo "🔧 Applying patch..."
 
 if [ "$CREATE_BACKUP" = true ]; then
 	mkdir -p "$BACKUP_DIR"
@@ -141,7 +142,18 @@ else
 	echo "⏩ Skipping backup (using existing)."
 fi
 
+# Create 2nd backup if not already
+if [ ! -f "$AG_DIR/resources/app/out/jetskiAgent/main.js.bak" ]; then
+	$SUDO_CMD cp "$AG_DIR/resources/app/out/jetskiAgent/main.js" "$AG_DIR/resources/app/out/jetskiAgent/main.js.bak"
+fi
+if [ ! -f "$AG_DIR/resources/app/product.json" ]; then
+	$SUDO_CMD cp "$AG_DIR/resources/app/product.json" "$AG_DIR/resources/app/product.json.bak"
+fi
+
 # --- CALL PYTHON SCRIPTS ---
+
+echo ""
+echo "🔧 Applying patch..."
 
 # 1. Patch Code
 $SUDO_CMD python3 "$SCRIPT_DIR/python/patch_code.py" "$AG_DIR"

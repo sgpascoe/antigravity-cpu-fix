@@ -11,18 +11,29 @@ AG_DIR_MAC := /Applications/Antigravity.app/Contents
 CONFIG_BASE_LINUX := $(HOME)/.config
 CONFIG_BASE_MAC := $(HOME)/Library/Application Support
 
-# Logic
-ifeq ($(OS),Darwin)
-    TARGET_DIR := $(AG_DIR_MAC)
-    CONFIG_DIR := $(CONFIG_BASE_MAC)
-else
-    # Check for /opt/Antigravity fallback (common on Linux)
-    ifneq ("",$(wildcard /opt/Antigravity))
-        TARGET_DIR := /opt/Antigravity
+# Logic - allow AG_DIR override from environment
+ifdef AG_DIR
+    TARGET_DIR := $(AG_DIR)
+    ifeq ($(OS),Darwin)
+        CONFIG_DIR := $(CONFIG_BASE_MAC)
     else
-        TARGET_DIR := $(AG_DIR_LINUX)
+        CONFIG_DIR := $(CONFIG_BASE_LINUX)
     endif
-    CONFIG_DIR := $(CONFIG_BASE_LINUX)
+else
+    ifeq ($(OS),Darwin)
+        TARGET_DIR := $(AG_DIR_MAC)
+        CONFIG_DIR := $(CONFIG_BASE_MAC)
+    else
+        # Linux: detect install path - prefer apt (/usr/share), fallback to Arch (/opt)
+        TARGET_DIR := $(AG_DIR_LINUX)
+        ifneq (,$(wildcard /opt/Antigravity/resources/.))
+            TARGET_DIR := /opt/Antigravity
+        endif
+        ifneq (,$(wildcard /usr/share/antigravity/resources/.))
+            TARGET_DIR := /usr/share/antigravity
+        endif
+        CONFIG_DIR := $(CONFIG_BASE_LINUX)
+    endif
 endif
 
 .PHONY: doctor
@@ -30,6 +41,7 @@ doctor: ##H@@	Check paths and health (Dry Run)
 	@echo "=== Antigravity Doctor ==="
 	@echo "Detected OS:       $(OS)"
 	@echo "Target Directory:  $(TARGET_DIR)"
+	@echo "  (Override with: AG_DIR=/your/path make doctor)"
 	@echo "Target Main:       $(TARGET_DIR)/resources/app/out/jetskiAgent/main.js"
 	@echo "Target Product:    $(TARGET_DIR)/resources/app/product.json"
 	@echo "Config Base:       $(CONFIG_DIR)"
@@ -103,5 +115,7 @@ lint: ##H@@	Run `shellcheck` and `flake8`
 
 .PHONY: 3_update_integrity
 3_update_integrity: ##H@@	Update integrity manifest
+	@echo "Detected OS: $(OS)"
+	@echo "Target Dir:  $(TARGET_DIR)"
 	# This usually requires sudo
 	python3 python/update_integrity.py "$(TARGET_DIR)"

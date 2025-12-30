@@ -1,0 +1,48 @@
+root = true
+
+[*]
+indent_style = space
+indent_size = 4
+end_of_line = lf
+charset = utf-8
+trim_trailing_whitespace = true
+
+max_line_length = 100
+
+
+[*.py]
+max_line_length = 88
+
+
+[{*.sh,.bash*}]
+indent_style = tab
+max_line_length = 79
+
+
+[*.{yaml,yml}]
+indent_size = 2
+
+
+[Makefile]
+indent_style = tab
+max_line_length = 120
+
+
+[*.md]
+max_line_length = 90
+trim_trailing_whitespace = false
+
+
+[*.rst]
+indent_size = 2
+max_line_length = 79
+
+
+[{config,.gitconfig,.gitconfig.*}]
+indent_style = tab
+indent_size = 8
+
+
+[{COMMIT_EDITMSG,MERGE_MSG,SQUASH_MSG,TAG_EDITMSG,git-rebase-todo}]
+max_line_length = 72
+
